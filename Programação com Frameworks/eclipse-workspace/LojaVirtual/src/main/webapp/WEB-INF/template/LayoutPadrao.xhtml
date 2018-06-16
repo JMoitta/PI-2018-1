@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><ui:insert name="tituloDaPagina">Loja Virtual</ui:insert></title>
+	<ui:insert name="conteudoDoHead"></ui:insert>
+	<h:outputStylesheet>
+		.jm-form-label {
+			width: 100px;
+			text-align: right;
+		}
+		.jm-form-input {
+			width: 250px;
+	s	}
+	</h:outputStylesheet>
+</h:head>
+<h:body>
+	
+	<h:form id="mainForm">
+	
+		<h:commandLink action="/index?faces-redirect=true">
+		
+			<h:graphicImage height="130" value="/resources/images/magento_logo.png"
+				alt="Logo Loja Virtual" />
+		</h:commandLink>
+		
+		<p:menubar id="menuHeader">
+		
+			<p:submenu label="Administração" 
+				rendered="#{seguranca.usuario.tipoPessoaEnum eq 'ROLE_ADMINISTRADOR' || 
+					seguranca.usuario.tipoPessoaEnum eq 'ROLE_FUNCIONARIO'}">
+			
+				<p:menuitem value="Pessoa" outcome="/pages/pessoa/administrar" 
+					rendered="#{seguranca.usuario.tipoPessoaEnum eq 'ROLE_ADMINISTRADOR'}"/>
+				<p:menuitem value="Produto" outcome="/pages/produto/administrar" />
+				<p:menuitem value="Forma de Pagamento" outcome="/pages/formaPgto/administrar" 
+					rendered="#{seguranca.usuario.tipoPessoaEnum eq 'ROLE_ADMINISTRADOR'}"/>
+			</p:submenu>
+			
+			<p:submenu label="Opções" style="float:right;" >
+			
+				<p:menuitem value="Configurações" icon="ui-icon-gear"
+					action="/usuario/configuracoes?faces-redirect=true" />
+			</p:submenu>
+			<p:menuitem id="botaoCarrinho" onclick="document.getElementById('mainForm:botaoCarrinho').click();"
+				value="Total de itens (#{carrinhoDeComprasBean.totalDeProdutos()})" icon="ui-icon-plusthick"
+					outcome="/pedido/carrinho?faces-redirect=true" style="float:right; display: block !important;"  />
+			<p:submenu id="carrinho" icon="ui-icon-cart" label="(#{carrinhoDeComprasBean.totalDeProdutos()})" style="float:right;"   >
+				<p:menuitem value="Total: R$ #{carrinhoDeComprasBean.pedido.total}" icon="ui-icon-cart" disabled="true"/>
+			</p:submenu>
+			<f:facet name="options">
+				<h:commandLink id="linkLogin" value="Entrar" styleClass="ui-menubar ui-menuitem-link"
+					rendered="#{seguranca.usuario eq null}"
+					action="/login?faces-redirect=true"/>
+				<p:outputLabel styleClass="ui-menubar ui-menuitem-link" value="#{seguranca.usuario.nome}"/>
+				<h:outputLink id="linkSair" styleClass="ui-menubar ui-menuitem-link"
+					rendered="#{seguranca.usuario != null}"
+					value="#{request.contextPath}/j_spring_security_logout">
+					Sair
+				</h:outputLink>
+			</f:facet>
+		</p:menubar>
+		<p:remoteCommand name="remoteCommandUpdateMenuHeader" update=":mainForm:menuHeader"/>
+	</h:form>
+	<ui:insert name="corpoDaPagina"></ui:insert>
+	
+</h:body>
+</html>
